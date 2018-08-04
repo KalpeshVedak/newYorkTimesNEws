@@ -20,6 +20,7 @@ public class NewsArticle implements Parcelable {
     private String geoFacet;
     private String imageUrl;
     private String bigImageUrl;
+    private String error;
 
     public NewsArticle(){ }
     protected NewsArticle(Parcel in) {
@@ -38,6 +39,7 @@ public class NewsArticle implements Parcelable {
         geoFacet = in.readString();
         imageUrl = in.readString();
         bigImageUrl = in.readString();
+        error = in.readString();
     }
 
     public static final Creator<NewsArticle> CREATOR = new Creator<NewsArticle>() {
@@ -193,7 +195,15 @@ public class NewsArticle implements Parcelable {
         dest.writeString(geoFacet);
         dest.writeString(imageUrl);
         dest.writeString(bigImageUrl);
+        dest.writeString(error);
     }
 
 
+    public void setException(Exception exception) {
+        this.error = exception.getMessage();
+    }
+
+    public String getException() {
+        return error;
+    }
 }

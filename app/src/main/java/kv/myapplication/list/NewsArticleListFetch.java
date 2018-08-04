@@ -23,10 +23,8 @@ public class NewsArticleListFetch {
     }
 
     public void fetchNewsArticles() {
-        if(mNewsFetchTask==null)
-        {
-            mNewsFetchTask = new NewsFetchTask();
-        }
+        mNewsFetchTask=null;
+        mNewsFetchTask = new NewsFetchTask();
         mNewsFetchTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -38,10 +36,14 @@ public class NewsArticleListFetch {
             try {
                 String url = "http://api.nytimes.com/svc/mostpopular/v2/mostviewed/all-sections/7.json?api-key=d1677cf1f6584f0383536da7315cdce2";
                 JSONObject jsonObject = NetworkCalls.getInstance().performNetworkCall(url);
-                newsArticleList= parseNewsArticleResponse(jsonObject);
+                newsArticleList = parseNewsArticleResponse(jsonObject);
             } catch (Exception e) {
-                mArticleListHander.onError(e);
+                NewsArticle newsArticle = new NewsArticle();
+                newsArticle.setException(e);
+                newsArticleList.add(newsArticle);
+
             }
+
             return newsArticleList;
         }
 
@@ -50,7 +52,6 @@ public class NewsArticleListFetch {
             super.onPostExecute(list);
             mArticleListHander.onNext(list);
         }
-
     }
 
     private ArrayList<NewsArticle> parseNewsArticleResponse(JSONObject jsonObject) {

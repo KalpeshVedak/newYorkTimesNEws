@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">NY Times Most Popular</string>
     <string name="title_newsarticle_detail">newsArticle Detail</string>
+    <string name="progres_bar_title">Downloading News</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="fetch_news_again">Try Again</string>
 </resources>

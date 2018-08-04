@@ -1,11 +1,13 @@
 package kv.myapplication.list;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 
 import kv.myapplication.R;
 import kv.myapplication.details.NewsArticleDetailActivity;
@@ -25,7 +27,9 @@ public class NewsArticleListActivity extends AppCompatActivity implements INewsA
      * device.
      */
     private boolean mTwoPane;
+    private ProgressDialog progress;
     private NewsArticleListPresenter mArticleListPresenter;
+    private Button mTryAgain;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,20 +44,40 @@ public class NewsArticleListActivity extends AppCompatActivity implements INewsA
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-        RecyclerView recyclerView = findViewById(R.id.newsarticle_list);
+        final RecyclerView recyclerView = findViewById(R.id.newsarticle_list);
         DividerItemDecoration itemDecor = new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(itemDecor);
         mArticleListPresenter = new NewsArticleListPresenter(this,new NewsArticleListFetch());
         mArticleListPresenter.setNewsArticleList(recyclerView,mTwoPane);
+        mTryAgain = findViewById(R.id.tryAgain);
+        mTryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTryAgain.setVisibility(View.INVISIBLE);
+                mArticleListPresenter.setNewsArticleList(recyclerView,mTwoPane);
+            }
+        });
     }
 
     @Override
     public void showProgress() {
-
+        progress=new ProgressDialog(this);
+        progress.setMessage(getString(R.string.progres_bar_title));
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.show();
     }
 
     @Override
     public void hideProgress() {
+        progress.dismiss();
+        progress.hide();
+    }
+
+    @Override
+    public void showErrorMessage() {
+       progress.dismiss();
+       progress.hide();
+       mTryAgain.setVisibility(View.VISIBLE);
 
     }
 
@@ -61,10 +85,13 @@ public class NewsArticleListActivity extends AppCompatActivity implements INewsA
     protected void onDestroy() {
         super.onDestroy();
         mArticleListPresenter.cleanUp();
+        progress=null;
     }
 
     @Override
     public void onClick(View v) {
         mArticleListPresenter.launchNextScreen(v);
     }
+
+
 }

@@ -30,18 +30,34 @@ class NewsArticleListPresenter {
 
     public void setNewsArticleList(final RecyclerView newsArticleListView, final boolean mTwoPane) {
         this.mTwoPane=mTwoPane;
-        mNewsListDisposable = mNewsArticleListFetch.getNewsArticleList().subscribe(new Consumer<ArrayList<NewsArticle>>() {
-            @Override
-            public void accept(ArrayList<NewsArticle> list) {
-                NewsArticlesAdapter newsArticlesAdapter = new NewsArticlesAdapter(mNewsArticleListActivity, list);
-                newsArticleListView.setAdapter(newsArticlesAdapter);
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) {
+        if(mNewsListDisposable==null || mNewsListDisposable.isDisposed()) {
+            mNewsListDisposable = mNewsArticleListFetch.getNewsArticleList().subscribe(new Consumer<ArrayList<NewsArticle>>() {
+                @Override
+                public void accept(ArrayList<NewsArticle> list) {
+                    if (list.size() == 1) {
+                        if (!list.get(0).getException().isEmpty()) {
+                            mNewsArticleListActivity.showErrorMessage();
+                            return;
+                        }
 
-            }
-        });
+                    }
+                    NewsArticlesAdapter newsArticlesAdapter = new NewsArticlesAdapter(mNewsArticleListActivity,list);
+                    newsArticleListView.setAdapter(newsArticlesAdapter);
+                    mNewsArticleListActivity.hideProgress();
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
+        }
+       fetchNewsArticles();
+    }
+
+    private void fetchNewsArticles()
+    {
+        mNewsArticleListActivity.showProgress();
         mNewsArticleListFetch.fetchNewsArticles();
     }
 
