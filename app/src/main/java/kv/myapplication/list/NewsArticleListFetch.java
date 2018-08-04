@@ -15,14 +15,19 @@ import kv.myapplication.system.NetworkCalls;
 public class NewsArticleListFetch {
 
 
-    private BehaviorSubject<ArrayList<NewsArticle>> mArticleListHander=BehaviorSubject.create();
+    private BehaviorSubject<ArrayList<NewsArticle>> mArticleListHander;
     private NewsFetchTask mNewsFetchTask;
     public BehaviorSubject<ArrayList<NewsArticle>> getNewsArticleList() {
-
         return mArticleListHander;
     }
 
+    public NewsArticleListFetch()
+    {
+        mArticleListHander=BehaviorSubject.create();
+    }
+
     public void fetchNewsArticles() {
+
         mNewsFetchTask=null;
         mNewsFetchTask = new NewsFetchTask();
         mNewsFetchTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -41,9 +46,7 @@ public class NewsArticleListFetch {
                 NewsArticle newsArticle = new NewsArticle();
                 newsArticle.setException(e);
                 newsArticleList.add(newsArticle);
-
             }
-
             return newsArticleList;
         }
 
