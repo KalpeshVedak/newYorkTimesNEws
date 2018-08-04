@@ -1,6 +1,6 @@
 # newYorkTimesNEws
 NewYorkTimes — 
-This is an application help to show the new york times news
+This is an application which can help user read all new yort times news in last 7 days
 
 Build
 $ clone https://github.com/KalpeshVedak/newYorkTimesNEws.git
